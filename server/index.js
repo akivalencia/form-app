@@ -10,14 +10,14 @@ app.use(express.json()); //req.body
 
 //ROUTES//
 
-//create a contact
+//create a contact //it works !!!! 
 app.post('/contacts', async(req, res) => {
     //await 
     try {
-        const {first_name} = req.body;
+        const {first_name, last_name, phone_number, email} = req.body;
         const newContact = await pool.query(
-            "INSERT INTO contact (first_name) VALUES($1)",
-            [first_name]
+            "INSERT INTO contact (first_name, last_name, phone_number, email) VALUES($1, $2, $3, $4) RETURNING *",
+            [first_name, last_name, phone_number, email]
         );
         res.json(newContact)
 
@@ -32,12 +32,9 @@ app.post('/contacts', async(req, res) => {
 //Get all contacts 
 app.get('/contacts', async (req, res)=> {
     try {
-    const contacts = await pool.query(
-        'SELECT * FROM contact;',
-        [true]
-    );
-    console.log({contacts});
-    res.json(contacts);
+    const allContacts = await pool.query(
+         "SELECT * FROM contact");
+    res.json(allContacts.rows);
         
     } catch (error) {
         console.log(error.message);
@@ -45,7 +42,20 @@ app.get('/contacts', async (req, res)=> {
 });
 
 //get a contact 
-
+//must match with the name of the key 
+app.get('/contacts/:user_id', async(req, res)=> {
+    try {
+        const {user_id} = req.params;
+        const contact = await pool.query(
+            "SELECT * FROM contact WHERE user_id = $1;",
+            [user_id]
+        );
+        res.json(contact.rows[0]);
+    //    console.log(req.params)
+    } catch (err) {
+        console.error(err.message);
+    }
+})
 //delete a contact 
 
 
