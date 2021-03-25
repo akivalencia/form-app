@@ -41,8 +41,7 @@ app.get('/contacts', async (req, res)=> {
     }
 });
 
-//get a contact 
-//must match with the name of the key 
+//get a contact based on id
 app.get('/contacts/:user_id', async(req, res)=> {
     try {
         const {user_id} = req.params;
@@ -56,7 +55,32 @@ app.get('/contacts/:user_id', async(req, res)=> {
         console.error(err.message);
     }
 })
+
+
+//get a contact based on last name
+app.get('/contacts/?last_name', async(req, res)=> {
+    try {
+        const {last_name} = req.params;
+        const contact = await pool.query(
+            "SELECT * FROM contact WHERE last_name LIKE '$1%';",
+            [last_name]
+        );
+        res.json(contact.rows[0]);
+    //    console.log(req.params)
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+//Error message: invalid input syntax for type integer: "Chu"
+//tried question mark and that just returns everything everything 
+
+
+
+
+
+
 //delete a contact 
+//
 
 
 
