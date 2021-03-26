@@ -58,12 +58,13 @@ app.get('/contacts/:user_id', async(req, res)=> {
 
 
 //get a contact based on last name
-app.get('/contacts/?last_name', async(req, res)=> {
+app.get('/contacts/:last_name', async(req, res)=> {
     try {
+        // const last_name = req.query.q;
         const {last_name} = req.params;
         const contact = await pool.query(
-            "SELECT * FROM contact WHERE last_name LIKE '$1%';",
-            [last_name]
+            "SELECT * FROM contact WHERE last_name LIKE $1;",
+            ['%' + last_name+ '%']
         );
         res.json(contact.rows[0]);
     //    console.log(req.params)
@@ -79,9 +80,20 @@ app.get('/contacts/?last_name', async(req, res)=> {
 
 
 
-//delete a contact 
-//
-
+//delete a contact //it works 
+app.delete('/contacts/:user_id', async(req, res)=> {
+    try {
+        const {user_id} = req.params;
+        const deleteContact = await pool.query(
+            "DELETE FROM contact WHERE user_id = $1;",
+            [user_id]
+        );
+        res.json('was deleted!');
+    //    console.log(req.params)
+    } catch (err) {
+        console.error(err.message);
+    }
+})
 
 
 
