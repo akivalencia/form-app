@@ -2,12 +2,12 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const pool = require('./db');
-
+// const bodyParser= require('body-parser');
 
 //middleware 
 app.use(cors());
 app.use(express.json()); //req.body
-
+// app.use(bodyParser());
 //ROUTES//
 
 //create a contact //it works !!!! 
@@ -20,6 +20,7 @@ app.post('/contacts', async(req, res) => {
             [first_name, last_name, phone_number, email]
         );
         res.json(newContact)
+        console.log(req.body);
 
         //console.log(req.body) gets the whole json blob 
     } catch (err) {
@@ -77,15 +78,12 @@ app.get('/contacts/:last_name', async(req, res)=> {
 
 
 
-
-
-
 //delete a contact //it works 
 app.delete('/contacts/:user_id', async(req, res)=> {
     try {
         const {user_id} = req.params;
         const deleteContact = await pool.query(
-            "DELETE FROM contact WHERE user_id = $1;",
+            "DELETE FROM contact WHERE user_id = $1 RETURNING *",
             [user_id]
         );
         res.json('was deleted!');
@@ -94,7 +92,6 @@ app.delete('/contacts/:user_id', async(req, res)=> {
         console.error(err.message);
     }
 })
-
 
 
 
