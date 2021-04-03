@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useForm} from 'react-hook-form';
 import UsersList from './ShowUsers';
 import FindByLastName from './Find';
@@ -7,7 +7,19 @@ export default function Form(){
     //state is managed using useForm *** 
     const {register, handleSubmit} = useForm();
 
-    const[users, setUsers] = React.useState([]);
+    const [users, setUsers] = React.useState([]);
+    
+    React.useEffect(() => {
+        async function viewUsers() {
+            const result = await viewData();
+            setUsers(result)
+        };
+        viewUsers();
+    }, []);
+    
+    const renderUser = async () => {
+        
+    }
     
 
 //function to call API 
@@ -63,15 +75,16 @@ export default function Form(){
                 <input type= 'tel' placeholder= '1234567' name='phone_number' ref={register}/><br/>
                 <input type='submit'/>
             </form>
-            <FindByLastName/>
-            <button onClick= {async ()=>{
+                <FindByLastName users={users}/>
+            {/* <button onClick= {async ()=>{
             //functionality use viewData 
             const result= await viewData();
             //users=result
             setUsers(result);
             }}>
             show all contacts 
-            </button>
+            </button> */}
+            
         </div>
         <br/>
         <UsersList users = {users}/>
